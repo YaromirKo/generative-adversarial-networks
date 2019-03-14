@@ -132,9 +132,13 @@ class Pix2Pix:
         valid = self.discriminator([fake_A, img_B])
 
         self.combined = tf.keras.models.Model(inputs=[img_A, img_B], outputs=[valid, fake_A])
-        self.combined.compile(loss=['mse', 'mae'],
-                              loss_weights=[1, 100],
-                              optimizer=optimizer)
+
+        # созадание мадлели на основе загружаемых данных
+        #self.combined.load_weights('./t_3/combined_55.h5')
+        # self.generator.load_weights('./t_3/generator_55.h5')
+        # self.discriminator.load_weights('./t_3/discriminator_55.h5')
+
+        self.combined.compile(loss=['mse', 'mae'], loss_weights=[1, 100], optimizer=optimizer)
 
     def build_generator(self):
         """U-Net Generator"""
@@ -252,19 +256,21 @@ class Pix2Pix:
                     self.sample_images(epoch, batch_i)
             print('\n')
             # сохранение сети в JSON
-            model_json = gan.generator.to_json()  # генерируем описание сети модели в формате json
-            json_file = open("generator.json", "w")  # записываем модель в файл
-            json_file.write(model_json)
-            json_file.close()
-            # сохранение весов модели
-            gan.generator.save_weights("generator.h5")
-            # сохранение сети в JSON
-            model_json = gan.discriminator.to_json()  # генерируем описание сети модели в формате json
-            json_file = open("discriminator.json", "w")  # записываем модель в файл
-            json_file.write(model_json)
-            json_file.close()
-            # сохранение весов модели
-            gan.discriminator.save_weights("discriminator.h5")
+            if epoch % 5 == 0:
+                model_json = gan.generator.to_json()  # генерируем описание сети модели в формате json
+                json_file = open("generator.json", "w")  # записываем модель в файл
+                json_file.write(model_json)
+                json_file.close()
+                # сохранение весов модели
+                gan.generator.save_weights("generator_" + str(epoch) + ".h5")
+                # сохранение сети в JSON
+                model_json = gan.discriminator.to_json()  # генерируем описание сети модели в формате json
+                json_file = open("discriminator.json", "w")  # записываем модель в файл
+                json_file.write(model_json)
+                json_file.close()
+                # сохранение весов модели
+                gan.discriminator.save_weights("discriminator_" + str(epoch) + ".h5")
+
 
     def sample_images(self, epoch, batch_i):
         os.makedirs('./train_first/%s' % self.dataset_name, exist_ok=True)
@@ -292,8 +298,13 @@ class Pix2Pix:
 
 
 print("123")
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth = True
+# sess = tf.Session(config=config)
 gan = Pix2Pix()
 print("1234")
+
+
 # gan.train(epochs=200, batch_size=1, sample_interval=200)
 gan.train(epochs=200, batch_size=1, sample_interval=1131)
 # сохранение сети в JSON
