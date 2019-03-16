@@ -5,7 +5,7 @@ from glob import glob
 
 
 class Loader:
-    def __init__(self, shape_img=(128, 128), path_data=''):
+    def __init__(self, shape_img=(128, 128), path_data='./*.jpg'):
         self.shape_img = shape_img
         self.paths_data = glob(path_data)
 
@@ -21,11 +21,11 @@ class Loader:
             for img in batch:
                 img = imageio.imread(img).astype(numpy.float)
                 h, w, _ = img.shape
-                target = img[:, :int(w/2), :]
-                in_img = img[:, int(w/2):, :]
+                target = img[:, :int(w / 2), :]
+                in_img = img[:, int(w / 2):, :]
                 target = skimage.transform.resize(target, self.shape_img)
                 in_img = skimage.transform.resize(in_img, self.shape_img)
-                if numpy.random.random() > 0.5:
+                if mode == 'train' and numpy.random.random() > 0.5:
                     target = numpy.fliplr(target)
                     in_img = numpy.fliplr(in_img)
                 target_.append(target)
@@ -33,4 +33,3 @@ class Loader:
             target_ = numpy.array(target_) / 127.5 - 1.
             in_img_ = numpy.array(in_img_) / 127.5 - 1.
             yield target_, in_img_
-
