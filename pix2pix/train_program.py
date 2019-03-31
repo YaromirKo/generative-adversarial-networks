@@ -169,8 +169,8 @@ for epoch in range(epochs - loading_weights[2]):
         if batch_index % int((loading_img.batch_num / 50)) == 0:
             steps += 1
         sys.stdout.write('\r')
-        sys.stdout.write("[Epoch %d/%d] [%-51s] [Batch %d/%d] [D loss: %f, acc: %d%%] [G loss: %f] time: %s"
-                         % (epoch + loading_weights[2], epochs, '=' * steps, batch_index, loading_img.batch_num, d_loss[0], 100*d_loss[1], g_loss[0], elapsed_time))
+        sys.stdout.write("[Epoch %d/%d] [%-51s] [Batch %d/%d] [D loss: %f, acc: %d%%] [G loss: %f, acc: %d%%] time: %s"
+                         % (epoch + loading_weights[2], epochs, '=' * steps, batch_index, loading_img.batch_num, d_loss[0], 100*d_loss[1], g_loss[0], 100*g_loss[2], elapsed_time))
         sys.stdout.flush()
         sleep(0.25)
     print('\n')
