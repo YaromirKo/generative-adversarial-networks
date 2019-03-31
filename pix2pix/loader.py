@@ -1,31 +1,57 @@
 import imageio
 import skimage.transform
-import numpy
+import numpy as np
 from glob import glob
 
 
 class Loader:
     def __init__(self, shape_img=(128, 128), path_data='./*.jpg'):
-        self.shape_img = shape_img
+        self.img_res = shape_img
         self.paths_data = glob(path_data)
-        self.batch_num = 1
+        self.batch_num = 0
 
-    def load_img(self, batch_size=1, mode='train'):
-        global target, in_img
-        if mode == 'train':
-            self.batch_num = int(len(self.paths_data) / batch_size)
+    def load_data(self, batch_size=1):
+        path = self.paths_data
+
+        batch_images = np.random.choice(path, size=batch_size)
+
+        imgs_A = []
+        imgs_B = []
+        for img_path in batch_images:
+            img = imageio.imread(img_path).astype(np.float)
+
+            h, w, _ = img.shape
+            _w = int(w / 2)
+            img_A, img_B = img[:, :_w, :], img[:, _w:, :]
+
+            img_A = skimage.transform.resize(img_A, self.img_res)
+            img_B = skimage.transform.resize(img_B, self.img_res)
+            imgs_A.append(img_A)
+            imgs_B.append(img_B)
+
+        imgs_A = np.array(imgs_A) / 127.5 - 1.
+        imgs_B = np.array(imgs_B) / 127.5 - 1.
+        return imgs_A, imgs_B
+
+    def load_batch(self, batch_size=1):
+        path = self.paths_data
+        self.batch_num = int(len(path) / batch_size)
+
         for i in range(self.batch_num):
-            batch = self.paths_data[i * batch_size:(i + 1) * batch_size]
-            target_, in_img_ = [], []
+            batch = path[i * batch_size:(i + 1) * batch_size]
+            imgs_A, imgs_B = [], []
             for img in batch:
-                img = imageio.imread(img).astype(numpy.float)
+                img = imageio.imread(img).astype(np.float)
                 h, w, _ = img.shape
-                target = img[:, :int(w / 2), :]
-                in_img = img[:, int(w / 2):, :]
-                target = skimage.transform.resize(target, self.shape_img)
-                in_img = skimage.transform.resize(in_img, self.shape_img)
-                target_.append(target)
-                in_img_.append(in_img)
-            target_ = numpy.array(target_) / 127.5 - 1.
-            in_img_ = numpy.array(in_img_) / 127.5 - 1.
-            yield target_, in_img_
+                half_w = int(w / 2)
+                img_A = img[:, :half_w, :]
+                img_B = img[:, half_w:, :]
+                img_A = skimage.transform.resize(img_A, self.img_res)
+                img_B = skimage.transform.resize(img_B, self.img_res)
+                imgs_A.append(img_A)
+                imgs_B.append(img_B)
+
+            imgs_A = np.array(imgs_A) / 127.5 - 1.
+            imgs_B = np.array(imgs_B) / 127.5 - 1.
+
+            yield imgs_A, imgs_B
