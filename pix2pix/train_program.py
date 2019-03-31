@@ -9,15 +9,21 @@ import matplotlib.pyplot
 tensorflow.logging.set_verbosity(tensorflow.logging.ERROR)
 ########################################################################################################################
 path_dataset_train = './train/*'
-path_save_weights = './generator_epoch_'
-path_save_json_model = './name'
-name_folder_for_testing = 'name'
-loading_weights = (False, './w_', 0)
 interval_save_weights = 1
+epoch_for_new_bigin_train = 0
+loading_weights_on_model = False
+path_save_weights = 'drive/pix2pix_weights/generator_epoch_'
+path_save_json_model = 'drive/pix2pix_weights/generator.json'
+name_folder_for_testing = 'new_style'
+loading_weights = (loading_weights_on_model, path_save_weights + str(epoch_for_new_bigin_train), epoch_for_new_bigin_train)
+print_info_models = False
+print_info = True
 
 ########################################################################################################################
 shape_img = (256, 256, 3)
 # Configure data loader
+if print_info:
+    print("Configure data loader")
 loading_img = Loader(shape_img=(shape_img[0], shape_img[1]), path_data=path_dataset_train)
 ########################################################################################################################
 target = tensorflow.keras.layers.Input(shape=shape_img)
@@ -28,7 +34,8 @@ generator_filters = 64
 discriminator_filters = 64
 ########################################################################################################################
 
-
+if print_info:
+    print("Build and compile the discriminator")
 def discriminator_layers(layer_input, filtres, kernal, batch_normalization):
     layer = tensorflow.keras.layers.Conv2D(filtres, kernel_size=kernal, strides=2, padding='same')(layer_input)
     layer = tensorflow.keras.layers.LeakyReLU(alpha=0.2)(layer)
@@ -46,8 +53,13 @@ validity = tensorflow.keras.layers.Conv2D(1, kernel_size=4, strides=1, padding='
 DISCRIMINATOR = tensorflow.keras.models.Model([target, in_img], validity)
 DISCRIMINATOR.compile(loss='mse', optimizer=optimizer, metrics=['accuracy'])
 
-# U-Net Generator
+if print_info_models:
+    print("DISCRIMINATOR")
+    print(DISCRIMINATOR.summary())
 
+# U-Net Generator
+if print_info:
+    print("Build the generator")
 def generator_layers_conv(layer_input, filters, kernal, batch_normalization):
     layer = tensorflow.keras.layers.Conv2D(filters, kernel_size=kernal, strides=2, padding='same')(layer_input)
     layer = tensorflow.keras.layers.LeakyReLU(alpha=0.2)(layer)
@@ -87,6 +99,10 @@ u7 = tensorflow.keras.layers.UpSampling2D(size=2)(u6)
 fake_output_img = tensorflow.keras.layers.Conv2D(shape_img[2], kernel_size=4, strides=1, padding='same', activation='tanh')(u7)
 GENERATOR = tensorflow.keras.models.Model(image_input, fake_output_img)
 
+if print_info_models:
+    print("GENERATOR")
+    print(GENERATOR.summary())
+
 if loading_weights[0]:
     GENERATOR.load_weights(loading_weights[1])
 
@@ -97,10 +113,14 @@ DISCRIMINATOR.trainable = False
 valid = DISCRIMINATOR([fake_img_gen, in_img])
 GAN = tensorflow.keras.models.Model(inputs=[target, in_img], outputs=[valid, fake_img_gen])
 GAN.compile(loss=['mse', 'mae'], loss_weights=[1, 100], optimizer=optimizer)
+
+if print_info_models:
+    print("GAN")
+    print(GAN.summary())
 ########################################################################################################################
 
 
-def test_function_gen_img(epoch_, batch_index_, batch_s=3):
+def test_function_gen_img(epoch_, batch_s=3):
     os.makedirs('./%s' % name_folder_for_testing, exist_ok=True)
     r, c = batch_s, batch_s
     target_test, in_img_test = loading_img.load_data(batch_size=batch_s)
@@ -116,11 +136,13 @@ def test_function_gen_img(epoch_, batch_index_, batch_s=3):
             axs[i, j].set_title(titles[i])
             axs[i, j].axis('off')
             index += 1
-    fig.savefig("./" + name_folder_for_testing + "/%d_%d.png" % (epoch_, batch_index_))
+    fig.savefig("./" + name_folder_for_testing + "/%d.png" % epoch_)
     matplotlib.pyplot.close()
 
 
 # train
+if print_info:
+    print("start train")
 epochs = 200
 batch_size = 1
 # Calculate output shape of D (PatchGAN)
@@ -131,6 +153,7 @@ fake = numpy.zeros((batch_size, ) + (patch, patch, 1))
 start_time = datetime.datetime.now()
 for epoch in range(epochs - loading_weights[2]):
     steps = 0
+    test_function_gen_img(epoch)
     for batch_index, (target, in_img) in enumerate(loading_img.load_batch(batch_size=batch_size)):
         # Train Discriminator
         # Condition on B and generate a translated version
@@ -143,19 +166,17 @@ for epoch in range(epochs - loading_weights[2]):
         # Train the generators
         g_loss = GAN.train_on_batch([target, in_img], [valid, target])
         elapsed_time = datetime.datetime.now() - start_time
-        if batch_size % int((batch_size / 51) - 2):
+        if batch_index % int((loading_img.batch_num / 50)) == 0:
             steps += 1
         sys.stdout.write('\r')
         sys.stdout.write("[Epoch %d/%d] [%-51s] [Batch %d/%d] [D loss: %f, acc: %d%%] [G loss: %f] time: %s"
                          % (epoch + loading_weights[2], epochs, '=' * steps, batch_index, loading_img.batch_num, d_loss[0], 100*d_loss[1], g_loss[0], elapsed_time))
         sys.stdout.flush()
         sleep(0.25)
-        if batch_index % (loading_img.batch_num - 1):
-            test_function_gen_img(epoch, batch_index)
     print('\n')
     if epoch % interval_save_weights == 0:
         GENERATOR.save_weights(path_save_weights + str(epoch) + ".h5")
     if loading_weights[2] == 0:
-        json_file = open(path_save_json_model + "generator.json", "w")
+        json_file = open(path_save_json_model, "w")
         json_file.write(GENERATOR.to_json())
         json_file.close()

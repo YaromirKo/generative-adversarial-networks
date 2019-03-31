@@ -1,11 +1,10 @@
 import imageio
 import skimage.transform
-import numpy as np
+import numpy
 from glob import glob
 
-
 class Loader:
-    def __init__(self, shape_img=(128, 128), path_data='./*.jpg'):
+    def __init__(self, shape_img=(128, 128), path_data='./*'):
         self.img_res = shape_img
         self.paths_data = glob(path_data)
         self.batch_num = 0
@@ -13,12 +12,12 @@ class Loader:
     def load_data(self, batch_size=1):
         path = self.paths_data
 
-        batch_images = np.random.choice(path, size=batch_size)
+        batch_images = numpy.random.choice(path, size=batch_size)
 
         imgs_A = []
         imgs_B = []
         for img_path in batch_images:
-            img = imageio.imread(img_path).astype(np.float)
+            img = imageio.imread(img_path).astype(numpy.float)
 
             h, w, _ = img.shape
             _w = int(w / 2)
@@ -29,8 +28,8 @@ class Loader:
             imgs_A.append(img_A)
             imgs_B.append(img_B)
 
-        imgs_A = np.array(imgs_A) / 127.5 - 1.
-        imgs_B = np.array(imgs_B) / 127.5 - 1.
+        imgs_A = numpy.array(imgs_A) / 127.5 - 1.
+        imgs_B = numpy.array(imgs_B) / 127.5 - 1.
         return imgs_A, imgs_B
 
     def load_batch(self, batch_size=1):
@@ -41,7 +40,7 @@ class Loader:
             batch = path[i * batch_size:(i + 1) * batch_size]
             imgs_A, imgs_B = [], []
             for img in batch:
-                img = imageio.imread(img).astype(np.float)
+                img = imageio.imread(img).astype(numpy.float)
                 h, w, _ = img.shape
                 half_w = int(w / 2)
                 img_A = img[:, :half_w, :]
@@ -51,7 +50,7 @@ class Loader:
                 imgs_A.append(img_A)
                 imgs_B.append(img_B)
 
-            imgs_A = np.array(imgs_A) / 127.5 - 1.
-            imgs_B = np.array(imgs_B) / 127.5 - 1.
+            imgs_A = numpy.array(imgs_A) / 127.5 - 1.
+            imgs_B = numpy.array(imgs_B) / 127.5 - 1.
 
             yield imgs_A, imgs_B
