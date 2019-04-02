@@ -15,8 +15,8 @@ loading_weights_on_model = False
 path_save_weights = 'drive/pix2pix_weights/generator_epoch_'
 path_save_json_model = 'drive/pix2pix_weights/generator.json'
 name_folder_for_testing = 'new_style'
-loading_weights = (loading_weights_on_model, path_save_weights + str(epoch_for_new_bigin_train), epoch_for_new_bigin_train)
-print_info_models = False
+loading_weights = (loading_weights_on_model, path_save_weights + str(epoch_for_new_bigin_train), epoch_for_new_bigin_train + 1)
+print_info_models = True
 print_info = True
 
 ########################################################################################################################
@@ -164,19 +164,20 @@ for epoch in range(epochs - loading_weights[2]):
         d_loss = 0.5 * numpy.add(d_loss_real, d_loss_fake)
         # Train Generator
         # Train the generators
+
         g_loss = GAN.train_on_batch([target, in_img], [valid, target])
         elapsed_time = datetime.datetime.now() - start_time
         if batch_index % int((loading_img.batch_num / 50)) == 0:
             steps += 1
         sys.stdout.write('\r')
-        sys.stdout.write("[Epoch %d/%d] [%-51s] [Batch %d/%d] [D loss: %f, acc: %d%%] [G loss: %f, acc: %d%%] time: %s"
-                         % (epoch + loading_weights[2], epochs, '=' * steps, batch_index, loading_img.batch_num, d_loss[0], 100*d_loss[1], g_loss[0], 100*g_loss[2], elapsed_time))
+        sys.stdout.write("[Epoch %d/%d] [%-51s] [Batch %d/%d] [D loss: %f, acc: %d%%] [G loss: %f] time: %s"
+                         % (epoch + loading_weights[2], epochs, '=' * steps, batch_index, loading_img.batch_num, d_loss[0], 100*d_loss[1], g_loss[0], elapsed_time))
         sys.stdout.flush()
         sleep(0.25)
     print('\n')
     if epoch % interval_save_weights == 0:
-        GENERATOR.save_weights(path_save_weights + str(epoch) + ".h5")
-    if loading_weights[2] == 0:
+        GENERATOR.save_weights(path_save_weights + str(epoch + loading_weights[2]) + ".h5")
+    if epoch_for_new_bigin_train == 0:
         json_file = open(path_save_json_model, "w")
         json_file.write(GENERATOR.to_json())
         json_file.close()
