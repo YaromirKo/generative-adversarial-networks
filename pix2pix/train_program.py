@@ -68,11 +68,11 @@ def generator_layers_conv(layer_input, filters, kernal, batch_normalization):
     return layer
 
 
-def generator_layers_deconv(layer_input, skip_layer_input, filters, kernal, dropout_rate=0):
+def generator_layers_deconv(layer_input, skip_layer_input, filters, kernal, dropout_rate):
     layer = tensorflow.keras.layers.UpSampling2D(size=2)(layer_input)
     layer = tensorflow.keras.layers.Conv2D(filters, kernel_size=kernal, strides=1, padding='same', activation='relu')(layer)
     if dropout_rate:
-        layer = tensorflow.keras.layers.Dropout(dropout_rate)(layer)
+        layer = tensorflow.keras.layers.Dropout(0.5)(layer)
     layer = tensorflow.keras.layers.BatchNormalization(momentum=0.8)(layer)
     layer = tensorflow.keras.layers.Concatenate()([layer, skip_layer_input])
     return layer
@@ -91,13 +91,13 @@ d7 = generator_layers_conv(d6,          generator_filters * 8, kernal=4, batch_n
 d8 = generator_layers_conv(d7,          generator_filters * 8, kernal=4, batch_normalization=True)
 
 # Upsamplig
-u0 = generator_layers_deconv(d8, d7, generator_filters * 8, kernal=4)
-u1 = generator_layers_deconv(u0, d6, generator_filters * 8, kernal=4)
-u2 = generator_layers_deconv(u1, d5, generator_filters * 8, kernal=4)
-u3 = generator_layers_deconv(u2, d4, generator_filters * 8, kernal=4)
-u4 = generator_layers_deconv(u3, d3, generator_filters * 4, kernal=4)
-u5 = generator_layers_deconv(u4, d2, generator_filters * 2, kernal=4)
-u6 = generator_layers_deconv(u5, d1, generator_filters,     kernal=4)
+u0 = generator_layers_deconv(d8, d7, generator_filters * 8, kernal=4, dropout_rate=True )
+u1 = generator_layers_deconv(u0, d6, generator_filters * 8, kernal=4, dropout_rate=True )
+u2 = generator_layers_deconv(u1, d5, generator_filters * 8, kernal=4, dropout_rate=True )
+u3 = generator_layers_deconv(u2, d4, generator_filters * 8, kernal=4, dropout_rate=False)
+u4 = generator_layers_deconv(u3, d3, generator_filters * 4, kernal=4, dropout_rate=False)
+u5 = generator_layers_deconv(u4, d2, generator_filters * 2, kernal=4, dropout_rate=False)
+u6 = generator_layers_deconv(u5, d1, generator_filters,     kernal=4, dropout_rate=False)
 u7 = tensorflow.keras.layers.UpSampling2D(size=2)(u6)
 fake_output_img = tensorflow.keras.layers.Conv2D(shape_img[2], kernel_size=4, strides=1, padding='same', activation='tanh')(u7)
 GENERATOR = tensorflow.keras.models.Model(image_input, fake_output_img)
