@@ -1,19 +1,34 @@
 <template>
   <div id="app">
-    <carousel-3d
-            v-if="show_carousel"
-            :autoplay="true"
-            :autoplay-timeout="3500"
-            :display="5"
-            :border="1"
-            class="carousel">
-        <slide v-for="(slide, i) in slides" :index="i">
-            <img :src="require('./img/' + `${i + 1}` + '.jpg')">
-        </slide>
-    </carousel-3d>
-     <h1 v-if="show_carousel">Welcome</h1>
-     <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
-     <Start v-if="!show_carousel"></Start>
+    <b-container fluid>
+        <b-col>
+            <b-row>
+                <carousel-3d
+                        v-if="show_carousel"
+                        :autoplay="true"
+                        :autoplay-timeout="3500"
+                        :display="5"
+                        :border="1"
+                        :clickable="false"
+                        class="carousel">
+                    <slide v-for="(slide, i) in slides" :index="i">
+                        <img :src="require('./img/' + `${i + 1}` + '.jpg')">
+                    </slide>
+                </carousel-3d>
+            </b-row>
+            <b-row align-h="center">
+                <form method=POST action="http://127.0.0.1:5000/upload">
+                    <input type="file" name="pic" accept="image/*">
+                    <input type="submit">
+                </form>
+                <h1 v-if="show_carousel">Welcome</h1>
+            </b-row>
+            <b-row align-h="center">
+                <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
+            </b-row>
+        </b-col>
+    </b-container>
+      <Start v-if="!show_carousel"></Start>
   </div>
 </template>
 
@@ -21,24 +36,36 @@
 import Start from './components/Start.vue'
 import axios from 'axios'
 import {API} from './main'
+import BContainer from "bootstrap-vue/src/components/layout/container"
+import BCol from "bootstrap-vue/src/components/layout/col"
+import BRow from "bootstrap-vue/src/components/layout/row";
 
 export default {
   name: 'app',
   components: {
-      Start
+      BRow,
+      Start,
+      BCol,
+      BContainer
   },
     data() {
       return {
           slides: 5,
           show_carousel: true,
-          data: ''
+          data: '',
+          api: ''
     }
   },
+    created() {
+        this.test_flask()
+        this.test()
+    },
     mounted() {
+
     },
     methods: {
-      test_flask() {
-          axios.get(API)
+        test_flask() {
+          axios.get(API + '/')
               .then(response => {
                   this.data = response.data
                   console.log(response)
@@ -46,8 +73,17 @@ export default {
               .catch(error => {
                   console.log('error')
               })
-
-      }
+            },
+        test() {
+          axios.get(API + '/upload')
+              .then(response => {
+                  this.api = response.data
+                  console.log(response)
+              })
+              .catch(error => {
+                  console.log('error')
+              })
+        }
     }
 }
 </script>
@@ -60,17 +96,22 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
+html, body {
+    height: 100vh;
+}
   body {
-    height: 100%;
     margin: 0;
     /*background: linear-gradient(to right top, #ffc171, #ffb280, #ffa695, #ff9ead, #ff9cc4, #f4a3db, #e3acef, #ccb6ff, #a1c5ff, #6ad3ff, #30dfff, #26e7f0) no-repeat fixed;*/
-      background: url("./img/background3.jpg") no-repeat fixed center;
+    background: url("./img/background3.jpg") no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
       background-size: cover;
   }
     .btn_start {
         width: 300px;
-        margin-left: auto;
-        margin-right: auto;
+        /*margin-left: auto;*/
+        /*margin-right: auto;*/
         box-sizing: border-box;
         background-color: transparent;
         border: 2px solid #e74c3c;
@@ -104,6 +145,5 @@ export default {
         border-radius: 2px;
         background-color:#6dc0c8;
     }
-
 
 </style>
