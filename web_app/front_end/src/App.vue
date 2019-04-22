@@ -17,9 +17,10 @@
                 </carousel-3d>
             </b-row>
             <b-row align-h="center">
-                <form method=POST action="http://127.0.0.1:5000/upload">
-                    <input type="file" name="pic" accept="image/*">
-                    <input type="submit">
+                <h2>456</h2>
+                <form method="POST" enctype="multipart/form-data" action="http://127.0.0.1:5000/upload">
+                    <input type="file" name="file" accept="image/*" multiple>
+                    <input type="submit" value="send">
                 </form>
                 <h1 v-if="show_carousel">Welcome</h1>
             </b-row>
@@ -58,7 +59,7 @@ export default {
   },
     created() {
         this.test_flask()
-        this.test()
+        //this.test()
     },
     mounted() {
 
