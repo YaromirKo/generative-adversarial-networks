@@ -33,7 +33,7 @@
                        v-for="(slide, i) in count"
                        :key="i"
                        caption=""
-                       :img-src="require('../img/' + `${i + 1}` + '.jpg')"></b-carousel-slide>
+                       :img-src="require('../img/' + `${index + 1}` + '.jpg')"></b-carousel-slide>
            </b-carousel>
        </b-col>
    </b-row>
@@ -58,7 +58,7 @@ export default {
               'The Starry Night'
               ],
           index: 0,
-          count: 6
+          count: 5
       }
     },
     watch: {
