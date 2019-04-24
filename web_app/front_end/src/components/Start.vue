@@ -58,7 +58,7 @@ export default {
               'The Starry Night'
               ],
           index: 0,
-          count: 6
+          count: 5
       }
     },
     watch: {
