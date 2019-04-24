@@ -1,7 +1,9 @@
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+OROGINS = "http://localhost:8080"
 UPLOAD_FOLDER = './static/'
+PRODUCTION = True
 
 
 class Config(object):

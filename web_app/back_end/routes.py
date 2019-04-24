@@ -1,5 +1,3 @@
-import os
-
 from flask import jsonify, request
 from app import *
 
@@ -14,15 +12,21 @@ def test():
     return jsonify('s')
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    id_style = request.form['id_style']
     file = request.files.getlist("file")
+
     for file in file:
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        if PRODUCTION:
+            path_file = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(path_file)
+            img = Image(path=path_file, style=id_style)
+            db.session.add(img)
+
+    db.session.commit()
+
     return jsonify(data="success")
-    # img = Image("path_test_2", 10)
-    # db.session.add(img)
-    # db.session.commit()
 
 
 @app.route('/get')

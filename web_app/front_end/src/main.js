@@ -8,8 +8,6 @@ import Slide from 'vue-carousel-3d'
 Vue.use(Carousel3d)
 Vue.use(Slide)
 Vue.use(BootstrapVue)
-const VueUploadComponent = require('vue-upload-component')
-Vue.component('file-upload', VueUploadComponent)
 
 
 import 'bootstrap/dist/css/bootstrap.css'

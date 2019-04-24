@@ -11,17 +11,16 @@
                         :border="1"
                         :clickable="false"
                         class="carousel">
-                    <slide v-for="(slide, i) in slides" :index="i">
+                    <slide v-for="(slide, i) in slides" :index="i" :key="i">
                         <img :src="require('./img/' + `${i + 1}` + '.jpg')">
                     </slide>
                 </carousel-3d>
             </b-row>
             <b-row align-h="center">
-                <h2>456</h2>
-                <form method="POST" enctype="multipart/form-data" action="http://127.0.0.1:5000/upload">
-                    <input type="file" name="file" accept="image/*" multiple>
-                    <input type="submit" value="send">
-                </form>
+                <!--<label>File-->
+                    <!--<input name="file"  accept="image/*" multiple type="file" id="file" ref="files" @change="handleFileUpload"/>-->
+                <!--</label>-->
+                <!--<button @click="submitFile">Submit</button>-->
                 <h1 v-if="show_carousel">Welcome</h1>
             </b-row>
             <b-row align-h="center">
@@ -34,6 +33,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Start from './components/Start.vue'
 import axios from 'axios'
 import {API} from './main'
@@ -54,36 +54,53 @@ export default {
           slides: 5,
           show_carousel: true,
           data: '',
-          api: ''
+          api: '',
+          file: []
     }
   },
     created() {
-        this.test_flask()
-        //this.test()
     },
     mounted() {
 
     },
     methods: {
-        test_flask() {
-          axios.get(API + '/')
-              .then(response => {
-                  this.data = response.data
-                  console.log(response)
-              })
-              .catch(error => {
-                  console.log('error')
-              })
-            },
-        test() {
-          axios.get(API + '/upload')
-              .then(response => {
-                  this.api = response.data
-                  console.log(response)
-              })
-              .catch(error => {
-                  console.log('error')
-              })
+        submitFile: function () {
+            let formData = new FormData()
+            // formData.append("file", this.file)
+
+            for (var i = 0; i < this.file.length; i++) {
+                formData.append("file", this.file[i])
+            }
+            formData.append('id', 179)
+            for (var pair of formData.entries()) {
+                console.log(pair[0]+ ', ' + pair[1]);
+            }
+            axios.post(API + '/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            ).then(function (response) {
+                console.log(response);
+            })
+                .catch(function () {
+                    console.log('FAILURE!!')
+                });
+        },
+
+        /*
+          Handles a change on the file upload
+        */
+        handleFileUpload(){
+             let uploadedFiles = this.$refs.files.files
+            console.log(this.$refs.files.files)
+
+            // this.file = this.$refs.files.files[0];
+            for( var i = 0; i < uploadedFiles.length; i++ ){
+                this.file.push( uploadedFiles[i] );
+            }
         }
     }
 }
