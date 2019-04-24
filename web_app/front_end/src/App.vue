@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-container fluid>
+    <b-container>
         <b-col>
             <b-row v-if="show_carousel" align-h="center">
                 <h1 style="color:#8B0000;"> Service name </h1>
@@ -20,16 +20,9 @@
                 </carousel-3d>
             </b-row>
             <b-row v-if="show_carousel" align-h="center">
-              <h5  style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art.</h5>
-              <h6> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
+              <h5 class="font-weight-bold" style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art.</h5>
+              <h6 class="font-weight-bold"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
             </b-row>
-            <b-row align-h="center"
-              <h5 class="font-weight-bold" v-if="show_carousel" style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art. </h5>
-              <b-row>
-                 </b-row>
-             <b-row align-h="center"
-              <h6 class="font-weight-bold" v-if="show_carousel" style="color:#000000;"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
-              </b-row>
             <b-row align-h="center">
                 <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
              </b-row>
