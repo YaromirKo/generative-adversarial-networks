@@ -1,26 +1,12 @@
 <template>
   <b-container fluid class="bv-example-row">
    <b-row align-h="start">
-       <b-col class="left_bar_item" :class="{active: index === i}" v-for="(name, i) in names" :key="i" @click="change_content(i)">
-            <b-col cols="auto" align-self="center"><img class="child" :src="require('../img/' + `${i + 1}` + '.jpg')" alt="456"></b-col>
-            <b-col cols="auto" align-self="center"><h4 class="">{{name}}</h4></b-col>
+       <b-col cols="" class="left_bar_item mw-100 d-cols-none" :class="{active: index === i}" v-for="(name, i) in names" :key="i" @click="change_content(i)">
+            <b-col cols="" align-self="center"><img class="child mw-100" :src="require('../img/' + `${i + 1}` + '.jpg')" alt="456"></b-col>
+            <b-col cols="" align-self="center" class="mw-100"><h4 class="">{{name}}</h4></b-col>
        </b-col>
    </b-row>
    <b-row>
-       <b-col cols="">
-           <carousel-3d
-                   :autoplay="true"
-                   :controls-visible="true"
-                   :perspective="0"
-                   :autoplay-timeout="3500"
-                   :display="9"
-                   :border="1"
-                   class="carousel">
-               <slide v-for="(slide, i) in 10" :index="i" :key="i">
-                   <img class="child" :src="require('../img/' + `${index + 1}` + '.jpg')" alt="456">
-               </slide>
-           </carousel-3d>
-       </b-col>
        <b-col cols="">
            <b-carousel
                    id="carousel-fade"
@@ -35,6 +21,21 @@
                        caption=""
                        :img-src="require('../img/' + `${index + 1}` + '.jpg')"></b-carousel-slide>
            </b-carousel>
+           <!--<carousel-3d-->
+                   <!--:autoplay="true"-->
+                   <!--:controls-visible="true"-->
+                   <!--:perspective="0"-->
+                   <!--:autoplay-timeout="3500"-->
+                   <!--:display="9"-->
+                   <!--:border="1"-->
+                   <!--class="carousel">-->
+               <!--<slide v-for="(slide, i) in 10" :index="i" :key="i">-->
+                   <!--<img class="child" :src="require('../img/' + `${index + 1}` + '.jpg')" alt="456">-->
+               <!--</slide>-->
+           <!--</carousel-3d>-->
+       </b-col>
+       <b-col cols="">
+
        </b-col>
    </b-row>
   </b-container>
