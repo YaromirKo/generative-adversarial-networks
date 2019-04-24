@@ -52,11 +52,11 @@ export default {
     data() {
       return {
           names: [
+              'The Great Wave off Kanagawa',
+              'Motif',
+              'Scream',
               'The Starry Night',
-              'The Starry Night',
-              'The Starry Night',
-              'The Starry Night',
-              'The Starry Night'
+              'Figures At The Seaside'
               ],
           index: 0,
           count: 5

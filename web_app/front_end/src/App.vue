@@ -23,8 +23,15 @@
               <h5  style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art.</h5>
               <h6> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
             </b-row>
-            <b-row v-if="show_carousel" align-h="center">
-                <button class="btn_start"  @click="show_carousel = false">START</button>
+            <b-row align-h="center"
+              <h5 class="font-weight-bold" v-if="show_carousel" style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art. </h5>
+              <b-row>
+                 </b-row>
+             <b-row align-h="center"
+              <h6 class="font-weight-bold" v-if="show_carousel" style="color:#000000;"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
+              </b-row>
+            <b-row align-h="center">
+                <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
              </b-row>
         </b-col>
     </b-container>
@@ -107,20 +114,19 @@ export default {
 </script>
 
 <style>
+@import url('//fonts.googleapis.com/css?family=Indie+Flower');
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Indie Flower', cursive;
   text-align: center;
   color: #2c3e50;
 }
 html, body {
-    height: 100vh;
-}
+  height: 100vh;
+  }
+h1 { font-family: "Indie Flower"; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 17.6px; } h3 { font-family: "Indie Flower"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; } p { font-family: "Indie Flower"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } blockquote { font-family: "Indie Flower"; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; } pre { font-family: "Indie Flower"; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px; }
+
   body {
-    font-family: 'Cute Font', cursive;
     margin: 0;
-    /*background: linear-gradient(to right top, #ffc171, #ffb280, #ffa695, #ff9ead, #ff9cc4, #f4a3db, #e3acef, #ccb6ff, #a1c5ff, #6ad3ff, #30dfff, #26e7f0) no-repeat fixed;*/
     background: url("./img/background3.jpg") no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
