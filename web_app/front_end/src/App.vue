@@ -2,6 +2,9 @@
   <div id="app">
     <b-container fluid>
         <b-col>
+            <b-row align-h="center">
+                <h1 v-if="show_carousel" style="color:#8B0000;"> Service name </h1>
+            </b-row>
             <b-row>
                 <carousel-3d
                         v-if="show_carousel"
@@ -17,17 +20,18 @@
                 </carousel-3d>
             </b-row>
             <b-row align-h="center">
-                <h2>456</h2>
-                <form method="POST" enctype="multipart/form-data" action="http://127.0.0.1:5000/upload">
-                    <input type="file" name="file" accept="image/*" multiple>
-                    <input type="submit" value="send">
-                </form>
-                <h1 v-if="show_carousel">Welcome</h1>
             </b-row>
+            <b-row align-h="center"
+              <h5 v-if="show_carousel" style="color:#000000;"> Our Web service gives you an opportunity to convert your photo into a piece of art. </h5>
+              <b-row>
+                 </b-row>
+             <b-row align-h="center"
+              <h6 v-if="show_carousel"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
+              </b-row>
             <b-row align-h="center">
                 <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
-            </b-row>
-        </b-col>
+             </b-row>
+             </b-col>
     </b-container>
       <Start v-if="!show_carousel"></Start>
   </div>
@@ -40,7 +44,7 @@ import {API} from './main'
 import BContainer from "bootstrap-vue/src/components/layout/container"
 import BCol from "bootstrap-vue/src/components/layout/col"
 import BRow from "bootstrap-vue/src/components/layout/row";
-
+//
 export default {
   name: 'app',
   components: {
@@ -101,6 +105,7 @@ html, body {
     height: 100vh;
 }
   body {
+    font-family: 'Cute Font', cursive;
     margin: 0;
     /*background: linear-gradient(to right top, #ffc171, #ffb280, #ffa695, #ff9ead, #ff9cc4, #f4a3db, #e3acef, #ccb6ff, #a1c5ff, #6ad3ff, #30dfff, #26e7f0) no-repeat fixed;*/
     background: url("./img/background3.jpg") no-repeat center center fixed;
