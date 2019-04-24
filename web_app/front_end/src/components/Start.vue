@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="bv-example-row">
    <b-row align-h="start">
-       <b-col cols="" class="left_bar_item mw-100 d-cols-none" :class="{active: index === i}" v-for="(name, i) in names" :key="i" @click="change_content(i)">
+       <b-col cols="" class="left_bar_item mw-100 d-none d-lg-block d-md-block" :class="{active: index === i}" v-for="(name, i) in names" :key="i" @click="change_content(i)">
             <b-col cols="" align-self="center"><img class="child mw-100" :src="require('../img/' + `${i + 1}` + '.jpg')" alt="456"></b-col>
             <b-col cols="" align-self="center" class="mw-100"><h4 class="">{{name}}</h4></b-col>
        </b-col>
