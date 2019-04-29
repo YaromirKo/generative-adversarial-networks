@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 OROGINS = "http://localhost:8080"
 UPLOAD_FOLDER = './static/'
 PRODUCTION = True
+DB_INIT = False
 
 
 class Config(object):

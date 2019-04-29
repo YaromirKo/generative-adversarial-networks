@@ -1,8 +1,6 @@
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from flask import Flask
 from models import *
-from config import *
-
 
 app = Flask(__name__)
 
@@ -11,6 +9,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 CORS(app, resources={r"/*": {"origins": OROGINS}})
 
-# CORS(app)
-
 db.init_app(app)
+
+# if DB_INIT:
+#     app.app_context().push()
+#     db.create_all()
