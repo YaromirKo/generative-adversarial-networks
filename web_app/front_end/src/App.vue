@@ -24,6 +24,8 @@
               <h6 class="font-weight-bold"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
             </b-row>
             <b-row align-h="center">
+                <!--<input type="file" ref="files" @change="handleFileUpload" multiple>-->
+                <!--<button @click="submitFile">send</button>-->
                 <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
              </b-row>
         </b-col>
@@ -68,13 +70,17 @@ export default {
             let formData = new FormData()
             // formData.append("file", this.file)
 
-            for (var i = 0; i < this.file.length; i++) {
+            for (let i = 0; i < this.file.length; i++) {
+                console.log(this.file[i])
                 formData.append("file", this.file[i])
             }
-            formData.append('id', 179)
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ', ' + pair[1]);
+
+            formData.append('id_style', 456)
+
+            for (let pair of formData.entries()) {
+                console.log(pair[0]+ ', ' + pair[1])
             }
+
             axios.post(API + '/upload',
                 formData,
                 {
@@ -95,10 +101,10 @@ export default {
         */
         handleFileUpload(){
              let uploadedFiles = this.$refs.files.files
-            console.log(this.$refs.files.files)
-
+            console.log(uploadedFiles)
             // this.file = this.$refs.files.files[0];
             for( var i = 0; i < uploadedFiles.length; i++ ){
+
                 this.file.push( uploadedFiles[i] );
             }
         }
@@ -107,7 +113,6 @@ export default {
 </script>
 
 <style>
-@import url('//fonts.googleapis.com/css?family=Indie+Flower');
 #app {
   font-family: 'Indie Flower', cursive;
   text-align: center;

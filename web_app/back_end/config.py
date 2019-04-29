@@ -5,6 +5,7 @@ OROGINS = "http://localhost:8080"
 UPLOAD_FOLDER = './static/'
 PRODUCTION = True
 DB_INIT = False
+MAX_CONTENT_LENGTH = 20 * 1024 * 1024
 
 
 class Config(object):
