@@ -24,8 +24,6 @@
               <h6 class="font-weight-bold"> You can choose one among provided styles, which will transform your photo into an artist's drawing.For example, select a photo of your doggo (of course, if you have one) and  then  choose the style in which you want to convert your photo of a beautiful creature(doggo.And give some time  to our service to process the photo. </h6>
             </b-row>
             <b-row align-h="center">
-                <!--<input type="file" ref="files" @change="handleFileUpload" multiple>-->
-                <!--<button @click="submitFile">send</button>-->
                 <button class="btn_start" v-if="show_carousel" @click="show_carousel = false">START</button>
              </b-row>
         </b-col>
@@ -37,12 +35,10 @@
 <script>
 /* eslint-disable */
 import Start from './components/Start.vue'
-import axios from 'axios'
-import {API} from './main'
 import BContainer from "bootstrap-vue/src/components/layout/container"
 import BCol from "bootstrap-vue/src/components/layout/col"
-import BRow from "bootstrap-vue/src/components/layout/row";
-//
+import BRow from "bootstrap-vue/src/components/layout/row"
+
 export default {
   name: 'app',
   components: {
@@ -54,60 +50,8 @@ export default {
     data() {
       return {
           slides: 5,
-          show_carousel: true,
-          data: '',
-          api: '',
-          file: []
-    }
-  },
-    created() {
-    },
-    mounted() {
-
-    },
-    methods: {
-        submitFile: function () {
-            let formData = new FormData()
-            // formData.append("file", this.file)
-
-            for (let i = 0; i < this.file.length; i++) {
-                console.log(this.file[i])
-                formData.append("file", this.file[i])
-            }
-
-            formData.append('id_style', 456)
-
-            for (let pair of formData.entries()) {
-                console.log(pair[0]+ ', ' + pair[1])
-            }
-
-            axios.post(API + '/upload',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
-            ).then(function (response) {
-                console.log(response);
-            })
-                .catch(function () {
-                    console.log('FAILURE!!')
-                });
-        },
-
-        /*
-          Handles a change on the file upload
-        */
-        handleFileUpload(){
-             let uploadedFiles = this.$refs.files.files
-            console.log(uploadedFiles)
-            // this.file = this.$refs.files.files[0];
-            for( var i = 0; i < uploadedFiles.length; i++ ){
-
-                this.file.push( uploadedFiles[i] );
-            }
-        }
+          show_carousel: true
+      }
     }
 }
 </script>

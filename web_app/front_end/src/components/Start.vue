@@ -22,9 +22,35 @@
            </b-carousel>
        </b-col>
        <b-col cols="12"	sm="6"	md="6"	lg="6"	xl="6">
-           <b-form-file v-model="files" accept="image/*" multiple></b-form-file>
-           <button @click="send">Send img</button><br/>
-           <button @click="downloadItem">Download style files</button>
+           <img v-if="preloader" :src="require('../img/preloader.gif')" width="50%" style="border-radius: 8px; " alt="">
+           <div v-if="download_url !== null">
+               <button @click="download_url = null, files.length = 0">upload again</button>
+               <img title="download your stylezed images" width="250px" style="border-radius: 5px; cursor: pointer" @click="downloadItem" :src="require('../img/download.jpg')" alt="download">
+           </div>
+           <div v-if="!preloader && download_url === null">
+               <img style="border-radius: 5px; cursor: pointer; margin-bottom: 5px" title="send images" v-if="files.length !== 0" @click="send" width="100px" :src="require('../img/send.jpg')" alt="">
+               <b-form-file placeholder="Chose files" v-if="files.length === 0" v-model="files" accept="image/*" multiple></b-form-file>
+               <div v-if="files.length !== 0" style="background-color:rgba(0, 0, 0, 0.2);">
+                   <table class="table">
+                       <thead>
+                           <tr>
+                               <th scope="col">img</th>
+                               <th scope="col">name</th>
+                               <th scope="col">size</th>
+                               <th scope="col">delete</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           <tr v-for="(j, i) in files" class="row_table">
+                               <th scope="row"><img width="40px" :src="preview(i)" alt=""></th>
+                               <td>{{files[i].name}}</td>
+                               <td>{{(files[i].size / 1024).toFixed(2)}} kb</td>
+                               <td><span><img title="delete this item" @click="delete_item(i)" width="25px" style="cursor: pointer; border-radius: 13px" :src="require('../img/delete_btn.jpg')"></span></td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
+           </div>
        </b-col>
    </b-row>
   </b-container>
@@ -53,25 +79,32 @@ export default {
           index: 0,
           files: [],
           paths: [],
-          download_url: '',
+          download_url: null,
           files_length: '',
           type_file: [
               { type: "octet/stream" },
               { zip: 'style_zip.zip' },
               { type: 'image/png' },
               { img: 'style.jpg'}
-          ]
+          ],
+          preloader: false,
       }
     },
     watch: {
       index: function () {
           this.get_img_paths(this.index)
-      }
+      },
     },
     created() {
       this.get_img_paths()
     },
     methods: {
+        preview(index) {
+            return URL.createObjectURL(this.files[index])
+        },
+          delete_item(index) {
+              this.files.splice(index, 1)
+          },
         change_content(index) {
           this.index = index
         },
@@ -93,6 +126,8 @@ export default {
         },
         send () {
             if (this.files.length !== 0) {
+                this.preloader = true
+
                 this.files_length = this.files.length
 
                 let files_pack = new FormData()
@@ -115,6 +150,7 @@ export default {
                         this.get_img_paths()
                         this.download_url = response.data.link
                         console.log(response)
+                        this.preloader = false
                     })
                     .catch((error) => {
                         console.log(error)
@@ -143,6 +179,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+    .row_table:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
   .left_bar_item {
     margin: 5px;
     border: 1px solid black;
