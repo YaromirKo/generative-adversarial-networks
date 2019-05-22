@@ -5,10 +5,20 @@
             <b-col cols="" align-self="center"><img class="child mw-100" :src="require('../img/' + `${i + 1}` + '.jpg')" alt="456"></b-col>
             <b-col cols="" align-self="center" class="mw-100"><h4 class="">{{name}}</h4></b-col>
        </b-col>
+       <div class="mw-100 d-block d-lg-none d-md-none  d-xl-none" style="width: 100%">
+           <b-dropdown id="dropdown-1" text="Chose files" style="width: 100%">
+               <b-dropdown-item  :class="{active: index === i}" v-for="(name, i) in names" :key="i" @click="change_content(i)">
+                   <img width="50px" :src="require('../img/' + `${i + 1}` + '.jpg')" alt="456">
+                   <h4 class="">{{name}}</h4>
+               </b-dropdown-item>
+           </b-dropdown>
+       </div>
    </b-row>
    <b-row>
        <b-col cols="12"	sm="6"	md="6"	lg="6"	xl="6">
-           <b-carousel id="carousel-fade" fade indicators controls img-width="512" img-height="512" :interval="2000">
+           <img v-show="preloader_for_carousel" :src="require('../img/preloader.gif')" width="50%" style="border-radius: 8px; " alt="">
+           <img v-if="error" title="upload again" width="250px" height="136.89px" style="border-radius: 5px; cursor: pointer; margin-right:25px;" @click="get_img_paths" :src="require('../img/refresh_btn.jpg')">
+           <b-carousel v-show="paths.length !== 0 && !preloader_for_carousel" id="carousel-fade" controls img-width="512" img-height="512" :interval="null">
                <b-carousel-slide v-for="(slide, i) in paths" :key="i">
                    <img    slot="img"
                            class="img-fluid w-50"
@@ -23,12 +33,12 @@
        </b-col>
        <b-col cols="12"	sm="6"	md="6"	lg="6"	xl="6">
            <img v-if="preloader" :src="require('../img/preloader.gif')" width="50%" style="border-radius: 8px; " alt="">
-           <div v-if="download_url !== null">
-               <button @click="download_url = null, files.length = 0">upload again</button>
+           <div v-if="download_url !== null" style="margin-top: 25px;">
+               <img title="upload again" width="250px" height="136.89px" style="border-radius: 5px; cursor: pointer; margin-right:25px;" @click="download_url = null, files.length = 0" :src="require('../img/refresh_btn.jpg')" alt="download">
                <img title="download your stylezed images" width="250px" style="border-radius: 5px; cursor: pointer" @click="downloadItem" :src="require('../img/download.jpg')" alt="download">
            </div>
            <div v-if="!preloader && download_url === null">
-               <img style="border-radius: 5px; cursor: pointer; margin-bottom: 5px" title="send images" v-if="files.length !== 0" @click="send" width="100px" :src="require('../img/send.jpg')" alt="">
+               <img style="border-radius: 5px; cursor: pointer; margin-bottom: 5px" title="send images" v-show="files.length !== 0" @click="send" width="100px" :src="require('../img/send.jpg')" alt="">
                <b-form-file placeholder="Chose files" v-if="files.length === 0" v-model="files" accept="image/*" multiple></b-form-file>
                <div v-if="files.length !== 0" style="background-color:rgba(0, 0, 0, 0.2);">
                    <table class="table">
@@ -60,13 +70,13 @@
 import BContainer from "bootstrap-vue/src/components/layout/container"
 import BCol from "bootstrap-vue/src/components/layout/col"
 /* eslint-disable */
-import {API} from "../main"
 import axios from 'axios'
 export default {
   name: 'Start',
     components: {
       BCol, BContainer
     },
+    props: ['API'],
     data() {
       return {
           names: [
@@ -85,9 +95,10 @@ export default {
               { type: "octet/stream" },
               { zip: 'style_zip.zip' },
               { type: 'image/png' },
-              { img: 'style.jpg'}
           ],
           preloader: false,
+          preloader_for_carousel: false,
+          error: false,
       }
     },
     watch: {
@@ -96,7 +107,7 @@ export default {
       },
     },
     created() {
-      this.get_img_paths()
+        this.get_img_paths()
     },
     methods: {
         preview(index) {
@@ -109,20 +120,18 @@ export default {
           this.index = index
         },
         downloadItem () {
-            axios.get(API + this.download_url, { responseType: 'blob' })
+            axios.get(this.API + '/static/' + this.download_url, { responseType: 'blob' })
                 .then(({ data }) => {
                     let blob = new Blob([data], this.files_length > 1 ? this.type_file[0] : this.type_file[2])
                     let link = document.createElement('a')
                     link.href = URL.createObjectURL(blob)
-                    link.download = this.files_length > 1 ? this.type_file[1]['zip'] : this.type_file[3]['img']
+                    link.download = this.files_length > 1 ? this.type_file[1]['zip'] : this.download_url
                     link.click()
-                    this.download_url = ''
                     this.files_length = ''
                 })
                 .catch(error => {
                     console.error(error)
                 })
-
         },
         send () {
             if (this.files.length !== 0) {
@@ -133,43 +142,47 @@ export default {
                 let files_pack = new FormData()
 
                 for (let i = 0; i < this.files.length; i++) {
-                    console.log(this.files[i])
                     files_pack.append("file", this.files[i])
                 }
 
                 files_pack.append("file", files_pack)
                 files_pack.append("id_style", this.index)
-                for (let pair of files_pack.entries()) {
-                    console.log(pair[0] + ', ' + pair[1])
-                }
 
-                const headers = {headers: {'Content-Type': 'multipart/form-data'}}
+                const headers = {headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Access-Control-Allow-Origin': "*"
+                }}
 
-                axios.post(API + '/upload', files_pack, headers)
+                axios.post(this.API + '/upload', files_pack, headers)
                     .then((response) => {
                         this.get_img_paths()
                         this.download_url = response.data.link
-                        console.log(response)
                         this.preloader = false
                     })
                     .catch((error) => {
-                        console.log(error)
+                        this.preloader = false
                     })
             }
         },
         get_img_paths() {
-            axios.get(API + '/get_paths', {
-                params: {"id_style" : this.index}
+            this.error = false
+            this.preloader_for_carousel = true
+            axios.get(this.API + '/get_paths?id_style=' + this.index, {
+                headers: {
+                    'Access-Control-Allow-Origin': "*",
+                }
             })
                 .then( (response) => {
                     this.paths = response.data.path
+                    this.preloader_for_carousel = false
                 })
                 .catch( (error) => {
-                    console.log(error)
+                    this.preloader_for_carousel = false
+                    this.error = true
                 })
         },
         url_set(index) {
-            return API + index
+            return this.API + index
         }
 
 
@@ -181,6 +194,7 @@ export default {
 <style scoped>
     .row_table:hover {
         background-color: rgba(0, 0, 0, 0.5);
+        color: white;
     }
   .left_bar_item {
     margin: 5px;

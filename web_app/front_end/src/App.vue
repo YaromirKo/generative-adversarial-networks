@@ -15,7 +15,7 @@
                         :clickable="false"
                         class="carousel">
                     <slide v-for="(slide, i) in slides" :index="i" :key="i">
-                        <img :src="require('./img/' + `${i + 1}` + '.jpg')">
+                        <img width="100%" :src="require('./img/' + `${i + 1}` + '.jpg')">
                     </slide>
                 </carousel-3d>
             </b-row>
@@ -28,7 +28,7 @@
              </b-row>
         </b-col>
     </b-container>
-      <Start v-if="!show_carousel"></Start>
+      <Start v-if="!show_carousel" :a-p-i="API"></Start>
   </div>
 </template>
 
@@ -38,6 +38,7 @@ import Start from './components/Start.vue'
 import BContainer from "bootstrap-vue/src/components/layout/container"
 import BCol from "bootstrap-vue/src/components/layout/col"
 import BRow from "bootstrap-vue/src/components/layout/row"
+import axios from "axios"
 
 export default {
   name: 'app',
@@ -50,8 +51,19 @@ export default {
     data() {
       return {
           slides: 5,
-          show_carousel: true
+          show_carousel: true,
+          API: null,
       }
+    },
+    created() {
+      this.api()
+    },
+    methods: {
+        api() {
+            axios.get('./api.json').then(response => {
+                this.API = response.data.api
+            })
+        },
     }
 }
 </script>

@@ -13,8 +13,6 @@ Vue.use(BootstrapVue)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-export const API =  'http://127.0.0.1:5000'
-
 Vue.config.productionTip = false
 
 
